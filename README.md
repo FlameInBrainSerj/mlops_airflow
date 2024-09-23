@@ -28,7 +28,7 @@ Connections in Airflow:
     * aws_secret_access_key:    <generated_in_minio_ak>
     * endpoint_url:             http://minio:9000 (docker)
 
-DAGS_Files:
+DAGs_Files:
 - HW1:      dags/dags_hw1.py
 - HW2:      TBA
 - Project:  TBA

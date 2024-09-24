@@ -11,7 +11,7 @@ x-airflow-common:
     AIRFLOW__WEBSERVER__BASE_URL: 'http://sskrivosheev.ru/airflow'
     AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX: true
   volumes:  
-    - ./dags:/opt/airflow/dags
+    - ./HWs/airflow/dags:/opt/airflow/dags
     - airflow_logs:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
   user: "${AIRFLOW_UID:-50000}:0"

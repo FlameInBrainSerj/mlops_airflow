@@ -24,11 +24,11 @@ Variables in Airflow:
 
 Connections in Airflow:
 - s3_connection:  
-    * aws_access_key_id:        <generated_in_minio_ak>
-    * aws_secret_access_key:    <generated_in_minio_ak>
+    * aws_access_key_id:        airflow
+    * aws_secret_access_key:    airflow123
     * endpoint_url:             http://minio:9000 (docker)
 
 DAGs_Files:
-- HW1:      dags/dags_hw1.py
-- HW2:      TBA
-- Project:  TBA
+- HW1:      HWs/airflow/dags/dags_hw1.py
+- HW2:      HWs/mlflow/pipelines_hw2.py
+- Project:  HWs/airflow/dags/dags_project.py

@@ -28,7 +28,7 @@ Connections in Airflow:
     * aws_secret_access_key:    airflow123
     * endpoint_url:             http://minio:9000 (docker)
 
-DAGs_Files:
+HWs:
 - HW1: (done)      
     - Файл: HWs/airflow/dags/dags_hw1.py
     - Бакет: airflow

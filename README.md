@@ -29,6 +29,12 @@ Connections in Airflow:
     * endpoint_url:             http://minio:9000 (docker)
 
 DAGs_Files:
-- HW1:      HWs/airflow/dags/dags_hw1.py (done)
-- HW2:      HWs/mlflow/pipelines_hw2.py (not yet)
-- Project:  HWs/airflow/dags/dags_project.py (not yet)
+- HW1: (done)      
+    - Файл: HWs/airflow/dags/dags_hw1.py
+    - Бакет: airflow
+- HW2: (in progress)      
+    - Файл: HWs/mlflow/runs_hw2.py
+    - Бакет: mlflow
+- Project: (not yet)  
+    - Файл: HWs/airflow/dags/dags_project.py
+    - Бакет: lizvladi-mlops

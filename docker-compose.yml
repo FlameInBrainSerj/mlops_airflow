@@ -12,6 +12,8 @@ x-airflow-common:
     AIRFLOW__WEBSERVER__ENABLE_PROXY_FIX: true
   volumes:  
     - ./HWs/airflow/dags:/opt/airflow/dags
+    # To display mlflow pipeline in Jupyter
+    - ./HWs/mlflow:/opt/airflow/mlflow
     - airflow_logs:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
   user: "${AIRFLOW_UID:-50000}:0"

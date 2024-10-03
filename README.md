@@ -13,14 +13,18 @@ Services can accessed following way:
     * Url:          [sskrivosheev.ru/minio](http://sskrivosheev.ru/minio)
     * Login:        airflow
     * Password:     airflow123
-- Jupyter Noteobook:  
+- Jupyter Noteobook:
     * Url:          [sskrivosheev.ru/jupyter](http://sskrivosheev.ru/jupyter)
     * Token:        airflow
 
 Variables in Airflow:
-- S3_BUCKET:  
-    * Key: S3_BUCKET   
-    * Val: airflow
+- S3_BUCKET :               airflow
+- S3_BUCKET_Project :       lizvladi-mlops
+- MLFLOW_TRACKING_URI :     postgresql://test:test@postgres:5432/mlflow
+- AWS_ACCESS_KEY_ID :       airflow
+- AWS_SECRET_ACCESS_KEY :   airflow123
+- AWS_ENDPOINT_URL :        http://minio-container:9000 (docker)
+- AWS_DEFAULT_REGION :      us-east-1
 
 Connections in Airflow:
 - s3_connection:  
@@ -35,6 +39,6 @@ HWs:
 - HW2: (done)      
     - Файл: HWs/mlflow/runs_hw2.py
     - Бакет: mlflow
-- Project: (not yet)  
+- Project: (almost done)  
     - Файл: HWs/airflow/dags/dags_project.py
     - Бакет: lizvladi-mlops

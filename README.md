@@ -32,7 +32,7 @@ HWs:
 - HW1: (done)      
     - Файл: HWs/airflow/dags/dags_hw1.py
     - Бакет: airflow
-- HW2: (in progress)      
+- HW2: (done)      
     - Файл: HWs/mlflow/runs_hw2.py
     - Бакет: mlflow
 - Project: (not yet)  

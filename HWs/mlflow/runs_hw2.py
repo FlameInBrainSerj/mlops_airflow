@@ -11,7 +11,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
 ARTIFACT_ROOT = "s3://mlflow"
-EXPERIMENT_NAME = "sergey_krivosheev_test"
+EXPERIMENT_NAME = "sergey_krivosheev_hw2"
 PARENT_RUN_NAME = "FlameInBrain"
 
 MODELS = dict(

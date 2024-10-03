@@ -1,5 +1,6 @@
-import os
 import json
+import os
+import time
 from datetime import timedelta
 from io import StringIO
 
@@ -12,7 +13,7 @@ from airflow.utils.dates import days_ago
 from mlflow.models import infer_signature
 from mlflow.tracking import MlflowClient
 from sklearn.datasets import fetch_california_housing
-from sklearn.ensemble import RandomForestRegressor, HistGradientBoostingRegressor
+from sklearn.ensemble import HistGradientBoostingRegressor, RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -81,36 +82,55 @@ def load_data_from_s3(s3_hook: S3Hook, path: str) -> pd.DataFrame:
 
 
 def init(**kwargs):
+    # Init step logs
+    timestamp = time.time()
+    kwargs["ti"].xcom_push(
+        key="init_metrics",
+        value={"timestamp": timestamp},
+    )
+
     # Init Airflow env variables
     configure_mlflow()
-
     # Get experiment ID in MLFlow
     exp_id = get_experiment_id(EXPERIMENT_NAME)
-
     # Init parent_run
     parent_run = mlflow.start_run(
         run_name=PARENT_RUN_NAME,
         experiment_id=exp_id,
         description="parent",
     )
-
     # Push exp_info to XCom
     kwargs["ti"].xcom_push(
         key="mlflow_exp_info",
         value={
             "exp_name": EXPERIMENT_NAME,
-            'exp_id': exp_id,
+            "exp_id": exp_id,
             "parent_run_name": PARENT_RUN_NAME,
-            'parent_run_id': parent_run.info.run_uuid
-        }
+            "parent_run_id": parent_run.info.run_uuid,
+        },
     )
 
 
 def get_data(**kwargs):
+    start_time = time.time()
+
     # Get data
     data = fetch_california_housing()
     df = pd.DataFrame(data.data, columns=data.feature_names)
     df["target"] = data.target
+
+    end_time = time.time()
+
+    # Get_data step logs
+    metrics = {
+        "start_time": start_time,
+        "end_time": end_time,
+        "dataset_size": df.shape,
+    }
+    kwargs["ti"].xcom_push(
+        key="data_metrics",
+        value=metrics,
+    )
 
     # Upload initial data to S3
     s3 = S3Hook(S3_CONN)
@@ -122,6 +142,8 @@ def get_data(**kwargs):
 
 
 def prepare_data(**kwargs):
+    start_time = time.time()
+
     # Get initial data from S3
     s3 = S3Hook(S3_CONN)
     data = load_data_from_s3(s3_hook=s3, path=f"{S3_PATH_PREFIX}/datasets/data.csv")
@@ -162,6 +184,19 @@ def prepare_data(**kwargs):
     X_train_scaled["target"] = y_train
     X_val_scaled["target"] = y_val
 
+    end_time = time.time()
+
+    # Prepare_data step logs
+    metrics = {
+        "start_time": start_time,
+        "end_time": end_time,
+        "features": X.columns.tolist(),
+    }
+    kwargs["ti"].xcom_push(
+        key="prepare_metrics",
+        value=metrics,
+    )
+
     # Upload splitted data to S3
     s3 = S3Hook(S3_CONN)
     create_buffer_and_load_data_to_s3(
@@ -182,6 +217,8 @@ def prepare_data(**kwargs):
 
 
 def train_and_log_model(model, model_name, **kwargs):
+    start_time = time.time()
+
     # Get experiment info
     exp_info = kwargs["ti"].xcom_pull(key="mlflow_exp_info")
 
@@ -202,15 +239,27 @@ def train_and_log_model(model, model_name, **kwargs):
     y_train = data_train["target"]
     model.fit(X_train, y_train)
 
+    end_time = time.time()
+
+    # Train_and_log_model step logs
+    metrics = {
+        "start_time": start_time,
+        "end_time": end_time,
+    }
+    kwargs["ti"].xcom_push(
+        key="train_metrics",
+        value=metrics,
+    )
+
     # Validation dataset
     eval_df = data_val.copy()
 
     # # MLFlow child run
     with mlflow.start_run(
         run_name=model_name,
-        experiment_id=exp_info['exp_id'],
+        experiment_id=exp_info["exp_id"],
         nested=True,
-        parent_run_id=exp_info['parent_run_id']
+        parent_run_id=exp_info["parent_run_id"],
     ) as child_run:
 
         # Log model
@@ -241,6 +290,10 @@ def train_and_log_model(model, model_name, **kwargs):
 
 
 def save_results(models_names, **kwargs) -> None:
+    init_metrics = kwargs["ti"].xcom_pull(key="init_metrics")
+    data_metrics = kwargs["ti"].xcom_pull(key="data_metrics")
+    prepare_metrics = kwargs["ti"].xcom_pull(key="prepare_metrics")
+    train_metrics = kwargs["ti"].xcom_pull(key="train_metrics")
     mlflow_exp_info = kwargs["ti"].xcom_pull(key="mlflow_exp_info")
 
     # Load info about all models
@@ -251,6 +304,10 @@ def save_results(models_names, **kwargs) -> None:
             "dag_name": DAG_NAME,
             "mlflow_exp_info": mlflow_exp_info,
             "model_info": model_info,
+            "init": init_metrics,
+            "get_data": data_metrics,
+            "prepare_data": prepare_metrics,
+            "train_model": train_metrics,
         }
 
         s3 = S3Hook(S3_CONN)
@@ -262,6 +319,7 @@ def save_results(models_names, **kwargs) -> None:
             key=path,
             replace=True,
         )
+
 
 dag = DAG(
     DAG_NAME,

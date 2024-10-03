@@ -10,11 +10,7 @@ from airflow.models import Variable
 from airflow.operators.python import PythonOperator
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from airflow.utils.dates import days_ago
-from botocore.exceptions import (
-    ConnectionError,
-    ConnectTimeoutError,
-    EndpointConnectionError,
-)
+from botocore.exceptions import ConnectionError, ConnectTimeoutError, EndpointConnectionError
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())

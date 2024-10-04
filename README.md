@@ -39,6 +39,6 @@ HWs:
 - HW2: (done)      
     - Файл: HWs/mlflow/runs_hw2.py
     - Бакет: mlflow
-- Project: (almost done)  
+- Project: (done)  
     - Файл: HWs/airflow/dags/dags_project.py
     - Бакет: lizvladi-mlops

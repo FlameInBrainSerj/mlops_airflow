@@ -29,7 +29,7 @@ def get_experiment_id(experiment_name: str) -> int:
         exp_id = mlflow.set_experiment(experiment_name).experiment_id
     else:
         exp_id = mlflow.create_experiment(
-            name=experiment_name, artifact_location="s3://mlflow"
+            name=experiment_name, artifact_location=ARTIFACT_ROOT
         )
 
     return exp_id

@@ -106,7 +106,7 @@ def init(**kwargs):
             "exp_name": EXPERIMENT_NAME,
             "exp_id": exp_id,
             "parent_run_name": PARENT_RUN_NAME,
-            "parent_run_id": parent_run.info.run_uuid,
+            "parent_run_id": parent_run.info.run_id,
         },
     )
 
